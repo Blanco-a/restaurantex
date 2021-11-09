@@ -4,70 +4,54 @@ class databse {
 
 	// properties = variabelen van een class
 	private $host;
+	private $database;
 	private $username;
 	private $password;
-	private $database;
-	private $conn;
+	private $pdo;
 
 	// constructor
 
-	public function __construct(){
-		$this->host = 'localhost';
-		$this->username = 'root';
-		$this->password = '';
-		$this->database = 'restaurantex';
+	public function __construct($host, $database, $username, $password){
+		$this->host = $host;
+		$this->username = $username;
+		$this->password = $password;
+		$this->database = $database;
 
 		try{
-			$dsn = "mysql:host=.$this->host;dbname=$this->database";
-			$this->conn = new PDO($dsn, $this->username, $this->password);
+			$dsn = 'mysql:host='.$this->host.';dbname=$this->database.';
+			$this->pdo = new PDO($dsn, $this->username, $this->password);
+			$this->pdo->setAttribute(POD::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
 
 		} catch (\PDOException $e) {
-			echo "Database connection failed <br>". $e->getMessage();
+			echo "Database error <br>". $e->getMessage();
 		}
 	}
 
-
- // als ik tijd heb verander ik dit naar registreren
- // admin toevoegen
-public function insert_admin(){
-	// insert into is de gegevens die erin komen
-	$sql = "INSERT INTO admin VALUES(:id, :gebruikersnaam, :wachtwoord);";
-	// sql wordt klaar gemaakt om naar db te sturen
-	$stmt = $this->conn->perpare($sql);
-	// hier wordt het uitgevoerd
-	$stmt->execute([
-		'id'=> NULL,
-		'gebruikersnaam' => 'admin',
-		'wachtwoord' => 'admin'
-	]);
-}
 
 // login admin
 public function loginAdmin($gebruikersnaam, $wachtwoord){
-	$sql = "SELECT id, gebruikersnaam, wachtwoord FROM admin WHERE gebruikersnaam = :gebruikersnaam";
+	
+	try{
+		$this->pdo->beginTransactionn();
 
-	$stmt = $this->conn->perpare($sql);
+			$stmt = $this->pdo->prepare("SELECT * FROM admintable where gebruikersnaam = :gebruikersnaam AND wachtwoord = wachtwoord");
 
-	$stmt->execute([
-		'gebruikersnaam' => $gebruikersnaam,
-	]);
-
-	$result = $stmt->fetch(PDO::FETCH_ASOC);
-
-
-	if(is_array($result)){
-		if(count($result) > 0){
-
-			if($gebruikersnaam == $result['gebruikersnaam'] && password_verify($wachtwoord, $result['wachtwoord'])){
+			$stmt->bindParam(':gebruikersnaam',$gebruikersnaam);
+			$stmt->bindParam(':wachtwoord',$wachtwoord);
+			$stmt->execute();
+			$rowCount = $stmt->rowCount();
+			print_r($rowCount);
+			if ($rowCount > 0) {
 				session_start();
-				$_SESSION['id'] = result ['id'];
-				$_SESSION['gebruikersnaam'] = result ['gebruikersnaam'];
-
-				header("location: ../index.php");
+				$_SESSION['gebruikersnaam'] = $_POST['gebruikersnaam'];
+				header("location: ../hoofdpagina.php");
 			}
-		}
-	}else{
-		echo "error";
+else {
+	echo "Verkeerde gegevens";
+}
+	}catch(PDOexception $e) {
+		$this->pdo->rollback();
+		echo "failed:". $e->getMessage();
 	}
-}
-}
+}}

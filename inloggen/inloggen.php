@@ -5,7 +5,7 @@ include '../database/database.php';
 
 //wordt gekeken of iets niet klopt en geeft dan een error aan
 if(isset($_POST['submit'])){
-	$fields = ['gebruikersnaam', 'wachtwoord'];
+	$fields = array("gebruikersnaam", "wachtwoord");
 
 	$error = false;
 	// als een field verkeerd is dan wordt de error true
@@ -15,15 +15,14 @@ if(isset($_POST['submit'])){
 		}
 	}
 	// geen error kan je inloggen
-	if(!$error) {
+	if(!$error = true) {
 		$gebruikersnaam = $_POST['gebruikersnaam'];
 		$wachtwoord = $_POST['wachtwoord'];
 
 		// connection met database
-		$db= new database();
-		// functie login en parameters erin worden aangeroepen
-		$db->login($gebruikersnaam, $wachtwoord);
-
+		$pdo = new database("localhost", "restaurantex", "root", "");
+		$pdo->loginadmin($gebruikersnaam, $wachtwoord);
+		echo '<hr>';
 	}
 
  }
@@ -48,7 +47,7 @@ if(isset($_POST['submit'])){
 	<input type="text" name="geruikersnaam" placeholder="Gebruikersnaam" required><br>
 	<input type="text" name="wachtwoord" placeholder="Wachtwoord" required><br>
 	<br>
-	<input type="submit" name="submit" value="Log in">
+	<input type="submit" name="submit" value="submit">
 </form>
 </body>
 </html>
