@@ -18,9 +18,11 @@
   <a class="active" href="./inloggen/inloggen.php">Log in</a>
 </div>
 
-<div style="padding-left:16px">
-  <h2>Top Navigation Example</h2>
-  <p>Some content..</p>
+<div style="position: fixed; top: 20%;
+left: 40%;">
+  <h1>Excellent Taste</h1>
+  <p>Welkom bij de reserverings- en bestellingappliecatie van Restaurant Excellent Taste. <br>
+  Vul eerst een reservering in. Deze kan telefonisch binnenkomen of kan worden als gasten plaatsnemen aan een vrije tafel.<br> Daarna kan een bestelling worden opgenomen.</p>
 </div>
 </body>
 </html>
